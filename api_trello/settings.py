@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from configparser import ConfigParser
+
+env_parser = ConfigParser()
+
+env_parser.read('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1(*qkypsy_n-8yk7qyx5$3!tkjnxrh&c)ajfdxx(n4x&)bld2e'
+SECRET_KEY = env_parser.get('django', 'secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env_parser.getboolean('django', 'debug_mode')
 
 ALLOWED_HOSTS = []
 
@@ -123,3 +128,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Trello
+TRELLO_KEY = env_parser.get('trello', 'key') # key
+TRELLO_TOKEN = env_parser.get('trello', 'token') # token
+TRELLO_URL = env_parser.get('trello', 'url') # main trello url
+TRELLO_ISSUE = env_parser.get('trello', 'issue') # idList of issue list in the board
+TRELLO_BUG = env_parser.get('trello', 'bug') # idList of bug list in the board
+TRELLO_TASK = env_parser.get('trello', 'task') # idList of task list in the board
