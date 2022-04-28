@@ -3,7 +3,7 @@
 
 - virtualenv -p python3.8 venv
 
-## Cloen the repo:
+## Clone the repo:
 
 - https://github.com/ingefull-git/trello_api.git
 
@@ -15,7 +15,7 @@
 
 - python mange.py runserver
 
-# Create card for a Task:
+# Create cards:
 ## Make a POST request to:
 
 If you want to add a TASK card run the commnad and will be added to the TASK list in the BOARD and create a LABEL with the category, in case somethin happend with the label, the card will be removed. 
