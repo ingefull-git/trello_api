@@ -16,25 +16,19 @@ class TrelloApiView(generics.GenericAPIView):
             msg['name'] = data.get('title', "")
             msg['desc'] = data.get('description', "")
             msg['category'] = data.get('category', "")
-            idlist = {}
-            if msg['type'].lower() == 'issue':
-                if msg['name'] and msg['desc']:
-                    idlist['issue'] = settings.TRELLO_ISSUE
-            elif msg['type'].lower() == 'bug':
-                if msg['desc']:
-                    idlist['bug'] = settings.TRELLO_BUG
-            elif msg['type'].lower() == 'task':
-                if msg['name'] and msg['category']:
-                    idlist['task'] = settings.TRELLO_TASK
-            response = api.create_card(msg, idlist)
-            if response.status_code == 200:
-                data = response.json()
-                r_status = status.HTTP_201_CREATED
+            valid = api.validate_data(msg)
+            if valid:
+                response = api.create_card(msg, valid)
+                if response.status_code == 200:
+                    data = response.json()
+                    r_status = status.HTTP_201_CREATED
+                else:
+                    data = {'error': 'There was an error and the card could not be created, please try again.'}
+                    r_status = status.HTTP_400_BAD_REQUEST
             else:
-                data = {'error': 'There was an error and the card could not be created, please try again.'}
+                data = {'error': "the data is wrong, check if there is something missing."}
                 r_status = status.HTTP_400_BAD_REQUEST
         except Exception as e:
             data = {'error': f'Error: {e}'}
             r_status = status.HTTP_404_NOT_FOUND
         return Response(data, status=r_status)
-
