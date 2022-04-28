@@ -3,6 +3,10 @@
 
 - virtualenv -p python3.8 venv
 
+## Cloen the repo:
+
+- https://github.com/ingefull-git/trello_api.git
+
 ## Install requirements
 
 - pip install -r requirements.txt
