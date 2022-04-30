@@ -31,7 +31,7 @@ class TrelloAPI:
         query = self.query
         query['name'] = category
         query['color'] = 'blue'
-        response = self.session.request('POST', self.endpoint + 'cards1/' + cardid + '/labels' , params=query, headers=self.headers)
+        response = self.session.request('POST', self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
         return response
 
     def delete_card(self, cardid):
@@ -56,5 +56,4 @@ class TrelloAPI:
                     deleted = self.delete_card(cardid)
                     deleted.status_code = status.HTTP_204_NO_CONTENT
                     return deleted
-        else:
-            return response
+        return response

@@ -1,4 +1,5 @@
-# Setup the project
+# Trello API: Project setup
+
 ## Create virtual environment
 
 - virtualenv -p python3.8 venv
