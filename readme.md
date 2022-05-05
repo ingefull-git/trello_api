@@ -30,3 +30,14 @@ To add an ISSUE card:
 To add a BUG card:
 
 - curl -X POST "http://127.0.0.1:8000/api/v1/" -H "Content-Type: application/json" -d '{"type":"bug", "description":"description of the bug"}'
+
+# Tests
+## Coverage report to html
+
+- pytest --cov-report html --cov=core_app tests
+- copy the path of the index.html that is inside the htmlcov folder
+
+## Run tests
+
+- pytest -sv
+

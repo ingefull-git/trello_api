@@ -1,6 +1,8 @@
 from requests import Session
 from django.conf import settings
 from rest_framework import status
+import requests
+import json
 
 
 class TrelloAPI:
@@ -11,8 +13,10 @@ class TrelloAPI:
             'key': settings.TRELLO_KEY,
             'token': settings.TRELLO_TOKEN,
             }
-        self.session = Session()
+        self.session = requests.session()
         self.session.headers.update(self.headers)
+        self.post= requests.post
+        self.delete = requests.delete
 
     def validate_data(self, data):
         idlist = {}
@@ -31,12 +35,12 @@ class TrelloAPI:
         query = self.query
         query['name'] = category
         query['color'] = 'blue'
-        response = self.session.request('POST', self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
+        response = self.post(self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
         return response
 
     def delete_card(self, cardid):
         query = self.query
-        response = self.session.request('DELETE', self.endpoint + 'cards/' + cardid, params=query, headers=self.headers)
+        response = self.delete(self.endpoint + 'cards/' + cardid, params=query, headers=self.headers)
         return response
 
     def create_card(self, data, idlist):
@@ -44,16 +48,18 @@ class TrelloAPI:
         query['idList'] = idlist.values()
         query['name'] = data.get('name')
         query['desc'] = data.get('desc')
-        response = self.session.request('POST', self.endpoint + 'cards', params=query, headers=self.headers)
+        response = self.session.post(self.endpoint + 'cards', params=query, headers=self.headers)
         if response.status_code == 200:
             if 'task' in idlist:
-                cardid = response.json()['id']
+                card = json.loads(response.content)
+                cardid = card.get('id', "")
                 category = data.get('category')
                 label = self.create_label(cardid, category)
                 if label.status_code == 200:
-                    return response
+                    return label
                 else:
                     deleted = self.delete_card(cardid)
-                    deleted.status_code = status.HTTP_204_NO_CONTENT
+                    if deleted.status_code == 200:
+                        deleted.status_code = status.HTTP_204_NO_CONTENT
                     return deleted
         return response
