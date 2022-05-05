@@ -41,3 +41,21 @@ To add a BUG card:
 
 - pytest -sv
 
+
+# .ENV file
+## Structure
+
+- [django]
+- secret_key = 
+- debug_mode = 
+##
+- [trello]
+- key = 
+- token = 
+- url = https://api.trello.com/1/
+- board = 
+- issue = 
+- bug = 
+- task = 
+
+
