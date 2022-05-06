@@ -26,8 +26,6 @@ def get_response_empty(*args):
 
 def mock_response(*args, **kwargs):
     resp = requests.Response()
-    print("\nKWARGS :", kwargs)
-    print("\nARGS :", args)
     if kwargs:
         if 'labels' in kwargs['url']:
             resp.status_code = status.HTTP_404_NOT_FOUND
