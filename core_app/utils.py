@@ -15,8 +15,6 @@ class TrelloAPI:
             }
         self.session = requests.session()
         self.session.headers.update(self.headers)
-        self.post= requests.post
-        self.delete = requests.delete
 
     def validate_data(self, data):
         idlist = {}
@@ -35,12 +33,12 @@ class TrelloAPI:
         query = self.query
         query['name'] = category
         query['color'] = 'blue'
-        response = self.post(self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
+        response = self.session.post(url=self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
         return response
 
     def delete_card(self, cardid):
         query = self.query
-        response = self.delete(self.endpoint + 'cards/' + cardid, params=query, headers=self.headers)
+        response = self.session.delete(url=self.endpoint + 'cards/' + cardid, params=query, headers=self.headers)
         return response
 
     def create_card(self, data, idlist):
@@ -48,7 +46,7 @@ class TrelloAPI:
         query['idList'] = idlist.values()
         query['name'] = data.get('name')
         query['desc'] = data.get('desc')
-        response = self.session.post(self.endpoint + 'cards', params=query, headers=self.headers)
+        response = self.session.post(url=self.endpoint + 'cards', params=query, headers=self.headers)
         if response.status_code == 200:
             if 'task' in idlist:
                 card = json.loads(response.content)
