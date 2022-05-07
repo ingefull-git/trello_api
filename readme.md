@@ -37,6 +37,11 @@ To add a BUG card:
 - pytest --cov-report html --cov=core_app tests
 - copy the path of the index.html that is inside the htmlcov folder
 
+## Coverage report in terminal
+
+- pytest --cov-report term --cov=core_app tests
+
+
 ## Run tests
 
 - pytest -sv
