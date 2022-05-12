@@ -84,6 +84,10 @@ def test_utils_trelloapi_post_task_create_card_ok(m, fixt3, client):
     url = reverse('home')
     response = client.post(url, json.dumps(fixt3), content_type='application/json')
     args = m.call_args_list
+<<<<<<< HEAD
+=======
+    print(args)
+>>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
     assert response.status_code == status.HTTP_201_CREATED
 
 @pytest.mark.skip
@@ -109,6 +113,10 @@ def test_utils_create_card_ok(m1):
     }
     api = TrelloAPI()
     response = api.create_card(data, id_list)
+<<<<<<< HEAD
+=======
+    print(m1.call_args_list)
+>>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
     assert response.status_code == 200
 
 # @pytest.mark.skip
@@ -152,6 +160,10 @@ def test_utils_add_card_ok(m1, fixt3, client):
     url = reverse('home')
     response = client.post(url, json.dumps(fixt3), content_type='application/json')
     args = m1.return_value.request.call_args_list
+<<<<<<< HEAD
+=======
+    print(args)
+>>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
     assert response.status_code == 201
     assert response.data == {'ok': 'label created'}
 
@@ -163,5 +175,9 @@ def test_utils_add_card_fail(m1, fixt3, client):
     url = reverse('home')
     response = client.post(url, json.dumps(fixt3), content_type='application/json')
     args = m1.return_value.request.call_args_list
+<<<<<<< HEAD
+=======
+    print(args)
+>>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
     assert response.status_code == 204
     assert response.data == {'error': 'card deleted'}
