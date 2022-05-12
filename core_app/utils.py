@@ -29,16 +29,37 @@ class TrelloAPI:
                 idlist['task'] = settings.TRELLO_TASK
         return idlist
 
+    def make_request(self, verb, url, query):
+        try:
+            response = self.session.request(verb, url=self.endpoint + url, params=query, headers=self.headers)
+            response.raise_for_status()
+        except (requests.ConnectionError, requests.Timeout) as e:
+            resp = requests.Response()
+            if type(e) == requests.Timeout:
+                resp.status_code = status.HTTP_408_REQUEST_TIMEOUT
+            else:
+                resp.status_code = status.HTTP_403_FORBIDDEN
+            resp._content = json.dumps({'error': f'{e}'})
+            return resp
+        except requests.exceptions.HTTPError as e:
+            if e:
+                resp = e.response
+                resp._content = json.dumps({'error': f'{e}'})
+                return resp
+        return response
+
     def create_label(self, cardid, category):
         query = self.query
         query['name'] = category
         query['color'] = 'blue'
-        response = self.session.post(url=self.endpoint + 'cards/' + cardid + '/labels' , params=query, headers=self.headers)
+        response = self.make_request('POST', 'cards/' + cardid + '/labels', query)
+        spend = response.elapsed.total_seconds()
         return response
 
     def delete_card(self, cardid):
         query = self.query
-        response = self.session.delete(url=self.endpoint + 'cards/' + cardid, params=query, headers=self.headers)
+        response = self.make_request('DELETE', 'cards/' + cardid, query)
+        spend = response.elapsed.total_seconds()
         return response
 
     def create_card(self, data, idlist):
@@ -46,10 +67,16 @@ class TrelloAPI:
         query['idList'] = idlist.values()
         query['name'] = data.get('name')
         query['desc'] = data.get('desc')
-        response = self.session.post(url=self.endpoint + 'cards', params=query, headers=self.headers)
-        if response.status_code == 200:
+        response = self.make_request('POST', 'cards/', query)
+        spend = response.elapsed.total_seconds()
+        return response
+        
+    
+    def add_card(self, data, idlist):
+        created = self.create_card(data, idlist)
+        if created.status_code == 200:
             if 'task' in idlist:
-                card = json.loads(response.content)
+                card = json.loads(created.content)
                 cardid = card.get('id', "")
                 category = data.get('category')
                 label = self.create_label(cardid, category)
@@ -60,4 +87,4 @@ class TrelloAPI:
                     if deleted.status_code == 200:
                         deleted.status_code = status.HTTP_204_NO_CONTENT
                     return deleted
-        return response
+        return created
