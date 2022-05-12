@@ -28,12 +28,12 @@ def fixt3(db):
     return fixture
 
 @pytest.fixture
-def fixt4(db):
+def fixt_fail(db):
     fixture = {
         'type': 'task',
         'title': '',
         'description': 'description',
-        'category': 'category fixt4'
+        'category': 'category fail'
     }
     return fixture
 
