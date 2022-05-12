@@ -43,10 +43,6 @@ class TrelloAPI:
             return resp
         except requests.exceptions.HTTPError as e:
             if e:
-<<<<<<< HEAD
-=======
-                print("pasa x aca", str(e))
->>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
                 resp = e.response
                 resp._content = json.dumps({'error': f'{e}'})
                 return resp
@@ -78,10 +74,6 @@ class TrelloAPI:
     
     def add_card(self, data, idlist):
         created = self.create_card(data, idlist)
-<<<<<<< HEAD
-=======
-        print("\nCREATED: ", created)
->>>>>>> a337869bed3015809230e717ab8ee8d99a5e64e8
         if created.status_code == 200:
             if 'task' in idlist:
                 card = json.loads(created.content)
@@ -92,7 +84,6 @@ class TrelloAPI:
                     return label
                 else:
                     deleted = self.delete_card(cardid)
-                    print("\DELETED: ", deleted, deleted.status_code)
                     if deleted.status_code == 200:
                         deleted.status_code = status.HTTP_204_NO_CONTENT
                     return deleted
