@@ -18,13 +18,14 @@ class TrelloApiView(generics.GenericAPIView):
             msg['category'] = data.get('category', "")
             valid = api.validate_data(msg)
             if valid:
-                response = api.create_card(msg, valid)
+                response = api.add_card(msg, valid)
+                print("\nREPONSE: ", response.content)
                 if response.status_code == 200:
                     data = json.loads(response.content)
                     r_status = status.HTTP_201_CREATED
                 else:
-                    data = {'error': 'There was an error and the card could not be created, please try again.'}
-                    r_status = status.HTTP_400_BAD_REQUEST
+                    data = json.loads(response.content)
+                    r_status = response.status_code
             else:
                 data = {'error': "the data is wrong, check if there is something missing."}
                 r_status = status.HTTP_401_UNAUTHORIZED
@@ -32,4 +33,5 @@ class TrelloApiView(generics.GenericAPIView):
             data = {'error': f'Error: {e}'}
             print("\nExcept error: ", e)
             r_status = status.HTTP_404_NOT_FOUND
+        print(data, r_status)
         return Response(data, status=r_status)
