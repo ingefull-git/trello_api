@@ -35,16 +35,16 @@ class TrelloAPI:
             response.raise_for_status()
         except (requests.ConnectionError, requests.Timeout) as e:
             resp = requests.Response()
-            if type(e) == requests.Timeout:
+            if 'timeout' in str(e).lower():
                 resp.status_code = status.HTTP_408_REQUEST_TIMEOUT
             else:
                 resp.status_code = status.HTTP_403_FORBIDDEN
-            resp._content = json.dumps({'error': f'{e}'})
+            resp._content = bytes(json.dumps({'error': f'{e}'}), 'utf-8')
             return resp
         except requests.exceptions.HTTPError as e:
             if e:
                 resp = e.response
-                resp._content = json.dumps({'error': f'{e}'})
+                resp._content = bytes(json.dumps({'error': f'{e}'}), 'utf-8')
                 return resp
         return response
 
@@ -52,14 +52,12 @@ class TrelloAPI:
         query = self.query
         query['name'] = category
         query['color'] = 'blue'
-        response = self.make_request('POST', 'cards/' + cardid + '/labels', query)
-        spend = response.elapsed.total_seconds()
+        response = self.make_request('POST', 'cards1/' + cardid + '/labels', query)
         return response
 
     def delete_card(self, cardid):
         query = self.query
         response = self.make_request('DELETE', 'cards/' + cardid, query)
-        spend = response.elapsed.total_seconds()
         return response
 
     def create_card(self, data, idlist):
@@ -68,7 +66,6 @@ class TrelloAPI:
         query['name'] = data.get('name')
         query['desc'] = data.get('desc')
         response = self.make_request('POST', 'cards/', query)
-        spend = response.elapsed.total_seconds()
         return response
         
     
@@ -86,5 +83,6 @@ class TrelloAPI:
                     deleted = self.delete_card(cardid)
                     if deleted.status_code == 200:
                         deleted.status_code = status.HTTP_204_NO_CONTENT
+                        deleted._content = bytes(json.dumps({'error':'card culd not be created'}), 'utf-8')
                     return deleted
         return created
