@@ -3,6 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from .utils import TrelloAPI
 import json
+import traceback
+import logging
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel('DEBUG')
+
 
 class TrelloApiView(generics.GenericAPIView):
 
@@ -22,14 +29,17 @@ class TrelloApiView(generics.GenericAPIView):
                 if response.status_code == 200:
                     data = json.loads(response.content)
                     r_status = status.HTTP_201_CREATED
+                    logging.info('The card was created successfully.')
                 else:
                     data = json.loads(response.content)
                     r_status = response.status_code
+                    logger.error(f'Erorr code: {response.status_code}, {response.text}')
             else:
                 data = {'error': "the data is wrong, check if there is something missing."}
                 r_status = status.HTTP_401_UNAUTHORIZED
         except Exception as e:
+            msg = traceback.format_exc()
             data = {'error': f'Error: {e}'}
-            print("\nExcept error: ", e)
+            logger.exception("There was an error.")
             r_status = status.HTTP_404_NOT_FOUND
         return Response(data, status=r_status)
